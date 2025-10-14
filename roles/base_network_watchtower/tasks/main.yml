@@ -5,6 +5,7 @@
     - name: Check if home lab Docker network exists
       community.docker.docker_network_info:
         name: "{{ home_lab_network_name }}"
+      become: true
       register: home_lab_network_info
 
     - name: Create home lab Docker network
@@ -29,4 +30,5 @@
       ansible.builtin.file:
         path: /tmp/base_network_watchtower
         state: absent
+
       when: not debug_mode
