@@ -1,0 +1,32 @@
+---
+- name: Deploy coding tools if requested
+  when: deploy_coding_tools | bool
+  block:
+    - name: Check if proxy Docker network exists
+      community.docker.docker_network_info:
+        name: "{{ proxy_network_name }}"
+      register: proxy_network_info
+
+    - name: Fail if proxy network doesn't exist
+      ansible.builtin.fail:
+        msg: "Required Docker network '{{ proxy_network_name }}' does not exist. Please create the network first through the core_infrastructure role."
+      when: not proxy_network_info.exists
+
+    - name: Create coding_tools directory
+      ansible.builtin.file:
+        path: /tmp/coding_tools
+        state: directory
+
+    - name: Include it-tools tasks
+      ansible.builtin.include_tasks: it-tools.yml
+      when: it_tools_domain_prefix | length > 0
+
+    - name: Include VS Code Server tasks
+      ansible.builtin.include_tasks: vs-code-server.yml
+      when: vs_code_server_src_code_path | length > 0
+
+    - name: Delete coding_tools related files
+      ansible.builtin.file:
+        path: /tmp/coding_tools
+        state: absent
+      when: not debug_mode

@@ -1,0 +1,19 @@
+---
+- name: Check if putty container exists
+  community.docker.docker_container_info:
+    name: putty
+  register: putty_info
+
+- name: Render putty compose file
+  ansible.builtin.template:
+    src: putty.yml.j2
+    dest: /tmp/remote_access/putty.yml
+    mode: '0644'
+  when: not putty_info.exists
+
+- name: Deploy putty using Docker Compose
+  community.docker.docker_compose_v2:
+    project_src: /tmp/remote_access
+    files:
+      - putty.yml
+  when: not putty_info.exists

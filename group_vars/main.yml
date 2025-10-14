@@ -1,0 +1,97 @@
+---
+# This file contains default variables for the Ansible playbook used to deploy the home lab.
+# Modify these variables as needed for your environment.
+
+######################### Global settings #########################
+timezone: "Europe/London"  # Set your local timezone for accurate log times
+debug_mode: false  # Set to true to enable to enable visibility container deployment files
+
+######################### Control flow #########################
+deploy_nfs_share: false  # Set to true to deploy a NFS share on a NAS for persistent storage of Docker volumes
+deploy_base_network_watchtower: true  # Set to true to deploy homelab base infrastructure (network, watchtower to manage containers)
+deploy_core_infrastructure: true  # Set to true to deploy portainer, pi-hole, traefik, cloudflare and crowdsec
+deploy_coding_tools: true  # Set to true to deploy coding tools
+deploy_remote_access: true  # Set to true to deploy remote access (cloudflared ddns, noip, wireguard, putty)
+deploy_dashboards: true  # Set to true to deploy dashboards (homepage, glances, uptime-kuma)
+
+######################### NFS share #########################
+nfs_server: "192.168.0.2" # IP address of the NFS server (NAS)
+nfs_path: "/share/docker_volumes" # Path on the NFS server to mount
+mount_point: "/mnt/docker_volumes"  # Local mount point for NFS share
+
+
+######################### Base infrastructure #########################
+### Network settings
+home_lab_network_name: home_lab
+home_lab_network_subnet: 172.16.3.0/24
+
+### Watchtower
+watchtower_schedule: "0 0 5 * * *"  # Cron schedule for watchtower updates. Adjust as appropriate
+watchtower_cleanup: true  # Enable cleanup of old images
+watchtower_debug: true  # Enable debug mode for watchtower
+watchtower_notification_delay: 2  # Delay for email notifications
+watchtower_notification_email_server: "smtp.gmail.com" # Gmail email server for notifications
+watchtower_notification_email_server_port: "587" # Port for Gmail email server
+
+
+######################### Core infrastructure #########################
+proxy_network_name: proxy
+
+### Pi-hole
+pi_hole_base_path: /var/docker_data/pihole # Path to Pi-hole base directory
+pi_hole_dnsmasq_path: /var/docker_data/pihole/etc-dnsmasq.d # Path to Pi-hole dnsmasq directory
+pihole_domain_prefix: pihole # Domain prefix for Pi-hole
+
+### Unbound
+unbound_config_path: /var/docker_data/unbound # Path to Unbound configuration directory
+
+### Portainer
+portainer_data_path: /var/docker_data/portainer/data # Path to Portainer data directory
+portainer_domain_prefix: portainer  # Domain prefix for Portainer
+
+### Traefik
+traefik_base_path: /var/docker_data/traefik # Path to Traefik base directory
+traefik_yml_path: /var/docker_data/traefik/traefik.yml	 # <-- file path -- FILE NEEDS TO EXIST
+traefik_acme_path: /var/docker_data/traefik/acme.json	# <-- file path -- FILE NEEDS TO EXIST
+traefik_config_path: /var/docker_data/traefik/config.yml	 # <-- file path -- FILE NEEDS TO EXIST
+traefik_logs_path: /var/docker_data/traefik/logs	# <-- folder path
+traefik_domain_prefix: traefik-dashboard  # Domain prefix for Traefik
+
+
+######################### Coding tools #########################
+### It-tools
+it_tools_domain_prefix: it-tools # Domain prefix for It-tools
+
+### VS Code Server
+vs_code_server_src_code_path: ~/src_code # Path to VS Code Server source code directory
+vs_code_server_domain_prefix: vs_code_server # Domain prefix for VS Code Server
+
+
+######################### Remote access #########################
+### No-IP
+noip_config_path: /var/docker_data/noip/config  # Path to No-IP configuration directory (e.g., /etc/noip)
+noip_interval: 30m # Update interval in seconds for No-IP
+
+### Wireguard
+wg_default_address_range: 10.10.0.x # Clients IP address range (e.g., 10.10.0.x)
+wg_default_dns: 1.1.1.1 # <-- Cloudflare DNS
+wg_data_path: /var/docker_data/wireguard # Path to WireGuard data directory
+wg_domain_prefix: wireguard # Domain prefix for WireGuard dashboard
+
+### Putty
+putty_config_path: /var/docker_data/putty/config # Path to store Putty configuration files
+putty_domain_prefix: putty # Domain prefix for Putty
+
+
+######################### Dashboards #########################
+### Homepage
+homepage_config_path: /var/docker_data/homepage/config # Path to store homepage configuration files
+homepage_domain_prefix: homepage # Domain prefix for Homepage
+
+### Glances
+glances_config_path: /var/docker_data/glances/config # Path to store Glances configuration files
+glances_domain_prefix: glances # Domain prefix for Glances dashboard
+
+### Uptime Kuma
+uptime_kuma_data_path: /var/docker_data/uptime-kuma # Path to Uptime Kuma data directory
+uptime_kuma_domain_prefix: uptime-kuma # Domain prefix for Uptime Kuma dashboard

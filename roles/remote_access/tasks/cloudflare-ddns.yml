@@ -1,0 +1,19 @@
+---
+- name: Check if cloudflare-ddns container exists
+  community.docker.docker_container_info:
+    name: cloudflare-ddns
+  register: cloudflare_ddns_info
+
+- name: Render cloudflare-ddns compose file
+  ansible.builtin.template:
+    src: cloudflare-ddns.yml.j2
+    dest: /tmp/remote_access/cloudflare-ddns.yml
+    mode: '0644'
+  when: not cloudflare_ddns_info.exists
+
+- name: Deploy cloudflare-ddns using Docker Compose
+  community.docker.docker_compose_v2:
+    project_src: /tmp/remote_access
+    files:
+      - cloudflare-ddns.yml
+  when: not cloudflare_ddns_info.exists

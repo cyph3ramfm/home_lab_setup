@@ -1,0 +1,24 @@
+---
+services:
+  noip:
+    image: ghcr.io/noipcom/noip-duc:latest
+    container_name: noip
+    hostname: noip
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+          max-size: "50m"
+    environment:
+      - NOIP_USERNAME={{ vault_noip_username }}
+      - NOIP_PASSWORD={{ vault_noip_password }}
+      - NOIP_HOSTNAMES={{ vault_noip_domains }}
+      - NOIP_CHECK_INTERVAL={{ noip_interval }}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - {{ home_lab_network_name }}
+
+networks:
+  {{ home_lab_network_name }}:
+    external: true

@@ -1,0 +1,50 @@
+---
+- name: Deploy remote access if requested
+  when: deploy_remote_access | bool
+  block:
+    - name: Check if home lab Docker network exists
+      community.docker.docker_network_info:
+        name: "{{ home_lab_network_name }}"
+      register: home_lab_network_info
+
+    - name: Fail if home lab network doesn't exist
+      ansible.builtin.fail:
+        msg: "Required Docker network '{{ home_lab_network_name }}' does not exist. Please create the network first through the base_network_watchtower role."
+      when: not home_lab_network_info.exists
+
+    - name: Check if proxy Docker network exists
+      community.docker.docker_network_info:
+        name: "{{ proxy_network_name }}"
+      register: proxy_network_info
+
+    - name: Fail if home lab network doesn't exist
+      ansible.builtin.fail:
+        msg: "Required Docker network '{{ proxy_network_name }}' does not exist. Please create the network first through the core_infrastructure role."
+      when: not proxy_network_info.exists
+
+    - name: Create remote_access directory
+      ansible.builtin.file:
+        path: /tmp/remote_access
+        state: directory
+
+    - name: Include cloudflare-ddns tasks
+      ansible.builtin.include_tasks: cloudflare-ddns.yml
+      when: vault_cf_api_key | length > 0 and vault_cf_zone | length > 0
+
+    - name: Include noip tasks
+      ansible.builtin.include_tasks: noip.yml
+      when: vault_noip_username | length > 0 and vault_noip_password | length > 0 and vault_noip_domains | length > 0
+
+    - name: Include wireguard tasks
+      ansible.builtin.include_tasks: wireguard.yml
+      when: vault_wg_host_url | length > 0 and vault_domain | length > 0
+
+    - name: Include putty tasks
+      ansible.builtin.include_tasks: putty.yml
+      when: putty_config_path | length > 0 and vault_domain | length > 0
+
+    - name: Delete remote_access related files
+      ansible.builtin.file:
+        path: /tmp/remote_access
+        state: absent
+      when: not debug_mode

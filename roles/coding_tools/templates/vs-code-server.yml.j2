@@ -1,0 +1,43 @@
+---
+services:
+  code-server:
+    image: lscr.io/linuxserver/code-server:latest
+    container_name: vs_code_server
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+          max-size: "50m"
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ={{ timezone }}
+      #- PASSWORD=password #optional
+      #- HASHED_PASSWORD= #optional
+      #- SUDO_PASSWORD=password #optional
+      #- SUDO_PASSWORD_HASH= #optional
+      #- PROXY_DOMAIN=code-server.my.domain #optional
+      - DEFAULT_WORKSPACE=/config/workspace #optional
+    volumes:
+      - {{ vs_code_server_src_code_path }}:/config
+    #ports:
+    #  - 8443:8443    
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.vs_code_server.entrypoints=http"
+      - "traefik.http.routers.vs_code_server.rule=Host(`{{ vs_code_server_domain_prefix }}.{{ vault_domain }}`)"
+      - "traefik.http.middlewares.vs_code_server-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.vs_code_server.middlewares=vs_code_server-https-redirect"
+      - "traefik.http.routers.vs_code_server-secure.entrypoints=https"
+      - "traefik.http.routers.vs_code_server-secure.rule=Host(`{{ vs_code_server_domain_prefix }}.{{ vault_domain }}`)"
+      - "traefik.http.routers.vs_code_server-secure.tls=true"
+      - "traefik.http.routers.vs_code_server-secure.service=vs_code_server"
+      - "traefik.http.services.vs_code_server.loadbalancer.server.port=8443"
+      - "traefik.docker.network={{ proxy_network_name }}"      
+    networks:
+      - {{ proxy_network_name }}
+      
+
+networks:
+  {{ proxy_network_name }}:
+    external: true

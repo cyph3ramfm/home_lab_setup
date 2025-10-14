@@ -1,0 +1,20 @@
+---
+- name: Check if Uptime Kuma container exists
+  community.docker.docker_container_info:
+    name: uptime-kuma
+  register: uptime_kuma_info
+
+- name: Render Uptime Kuma compose file
+  ansible.builtin.template:
+    src: uptime-kuma.yml.j2
+    dest: /tmp/dashboards/uptime-kuma.yml
+    mode: '0644'
+  when: not uptime_kuma_info.exists
+
+- name: Deploy Uptime Kuma using Docker Compose
+  community.docker.docker_compose_v2:
+    project_src: /tmp/dashboards
+    files:
+      - uptime-kuma.yml
+  when: not uptime_kuma_info.exists
+  

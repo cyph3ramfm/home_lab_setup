@@ -1,0 +1,19 @@
+---
+- name: Check if VS Code Server container exists
+  community.docker.docker_container_info:
+    name: vs_code_server
+  register: vs_code_server_info
+
+- name: Render VS Code Server compose file
+  ansible.builtin.template:
+    src: vs-code-server.yml.j2
+    dest: /tmp/coding_tools/vs-code-server.yml
+    mode: '0644'
+  when: not vs_code_server_info.exists
+
+- name: Deploy VS Code Server using Docker Compose
+  community.docker.docker_compose_v2:
+    project_src: /tmp/coding_tools
+    files:
+      - vs-code-server.yml
+  when: not vs_code_server_info.exists

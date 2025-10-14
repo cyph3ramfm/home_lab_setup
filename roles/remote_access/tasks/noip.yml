@@ -1,0 +1,19 @@
+---
+- name: Check if noip container exists
+  community.docker.docker_container_info:
+    name: noip
+  register: noip_info
+
+- name: Render noip compose file
+  ansible.builtin.template:
+    src: noip.yml.j2
+    dest: /tmp/remote_access/noip.yml
+    mode: '0644'
+  when: not noip_info.exists
+
+- name: Deploy noip using Docker Compose
+  community.docker.docker_compose_v2:
+    project_src: /tmp/remote_access
+    files:
+      - noip.yml
+  when: not noip_info.exists

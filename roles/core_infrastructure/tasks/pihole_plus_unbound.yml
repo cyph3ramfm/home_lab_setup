@@ -1,0 +1,63 @@
+---
+- name: Check if Pi-hole container exists
+  community.docker.docker_container_info:
+    name: pihole
+  register: pihole_info
+
+- name: Check if Unbound container exists
+  community.docker.docker_container_info:
+    name: unbound
+  register: unbound_info
+
+- name: Ensure Unbound services directory exists
+  ansible.builtin.file:
+    path: "{{ unbound_config_path }}"
+    state: directory
+    mode: '0777'
+  when: not unbound_info.exists
+  become: true
+
+- name: Deploy Unbound configuration
+  ansible.builtin.template:
+    src: unbound.conf.j2
+    dest: "{{ unbound_config_path }}/unbound.conf"
+    mode: '0777'
+  when: not unbound_info.exists
+
+# Currently not used, but may be useful in the future
+- name: Deploy Unbound A records configuration
+  ansible.builtin.template:
+    src: a-records.conf.j2
+    dest: "{{ unbound_config_path }}/a-records.conf"
+    mode: '0777'
+  when: not unbound_info.exists
+
+# Currently not used, but may be useful in the future
+- name: Deploy Unbound forward records configuration
+  ansible.builtin.template:
+    src: forward-records.conf.j2
+    dest: "{{ unbound_config_path }}/forward-records.conf"
+    mode: '0777'
+  when: not unbound_info.exists
+
+# Currently not used, but may be useful in the future
+- name: Deploy Unbound srv records configuration
+  ansible.builtin.template:
+    src: srv-records.conf.j2
+    dest: "{{ unbound_config_path }}/srv-records.conf"
+    mode: '0777'
+  when: not unbound_info.exists
+
+- name: Render Pi-hole plus Unbound compose file
+  ansible.builtin.template:
+    src: pihole_plus_unbound.yml.j2
+    dest: /tmp/core_infrastructure/pihole_plus_unbound.yml
+    mode: '0777'
+  when: not pihole_info.exists and not unbound_info.exists
+
+- name: Deploy Pi-hole plus Unbound using Docker Compose
+  community.docker.docker_compose_v2:
+    project_src: /tmp/core_infrastructure
+    files:
+      - pihole_plus_unbound.yml
+  when: not pihole_info.exists and not unbound_info.exists

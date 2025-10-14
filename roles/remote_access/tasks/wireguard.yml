@@ -1,0 +1,19 @@
+---
+- name: Check if wireguard container exists
+  community.docker.docker_container_info:
+    name: wireguard
+  register: wireguard_info
+
+- name: Render wireguard compose file
+  ansible.builtin.template:
+    src: wireguard.yml.j2
+    dest: /tmp/remote_access/wireguard.yml
+    mode: '0644'
+  when: not wireguard_info.exists
+
+- name: Deploy wireguard using Docker Compose
+  community.docker.docker_compose_v2:
+    project_src: /tmp/remote_access
+    files:
+      - wireguard.yml
+  when: not wireguard_info.exists

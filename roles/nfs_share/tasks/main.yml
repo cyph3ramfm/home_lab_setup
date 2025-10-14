@@ -1,0 +1,29 @@
+---
+- name: Mount NFS share for Docker volumes
+  when: deploy_nfs_share | bool
+  become: true
+  block:  
+    - name: Ensure NFS client utilities installed
+      apt:
+        name: nfs-common
+        state: present
+        update_cache: yes
+
+    - name: Create mount point
+      file:
+        path: "{{ mount_point }}"
+        state: directory
+        mode: '0777'
+
+    - name: Add NFS mount to /etc/fstab
+      lineinfile:
+        path: /etc/fstab
+        regexp: "{{ nfs_server }}:{{ nfs_path }}"
+        line: "{{ nfs_server }}:{{ nfs_path }} {{ mount_point }} nfs rw,_netdev,hard,intr,vers=4 0 0"
+        state: present
+        create: yes
+        backup: yes
+
+    - name: Mount NFS share
+      command: mount -a
+      changed_when: false

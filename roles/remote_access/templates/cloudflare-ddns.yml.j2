@@ -1,0 +1,22 @@
+---
+services:
+  cloudflare-ddns:
+    image: oznu/cloudflare-ddns:latest
+    container_name: cloudflare-ddns
+    hostname: cloudflare-ddns
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+    environment:
+      - API_KEY={{ vault_cf_api_key }}
+      - ZONE={{ vault_cf_zone }}
+      #- SUBDOMAIN={{ vault_cf_subdomain | default('') }}
+      - PROXIED=false
+    networks:
+      - {{ home_lab_network_name }}
+
+networks:
+  {{ home_lab_network_name }}:
+    external: true

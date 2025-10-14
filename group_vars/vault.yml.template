@@ -1,0 +1,53 @@
+---
+######################### General settings #########################
+vault_device_name: # Name of the device
+
+
+######################### Base network and watchtower #########################
+### Watchtower
+# This file contains sensitive information for the Ansible playbook used to deploy the home lab.
+# Modify these variables as needed for your environment.
+vault_watchtower_notification_email_from: # Email address from which notifications will be sent
+vault_watchtower_notification_email_to: # Email address to which notifications will be sent
+vault_watchtower_notification_email_server_user: # Email server user for notifications
+vault_watchtower_notification_email_server_password: # Email server password for notifications
+# Note: Ensure that the email server supports SMTP and that the credentials are correct.
+
+
+######################### Core infrastructure #########################
+### Domain - Applicable to all containers
+vault_domain: # Domain url
+
+### Pi-hole
+vault_pi_hole_webpassword: # Password for Pi-hole web interface
+
+### Traefik
+vault_cf_api_email: # Email for Cloudflare API
+vault_cf_dns_api_token: # Token for Cloudflare DNS API
+#vault_cf_api_key_traefik: # Key for Cloudflare API (optional, use token if available)
+vault_traefik_dashboard_user: # User for Traefik dashboard
+vault_traefik_dashboard_password: # Password for Traefik dashboard (BASE-20 password, needs to be generated from desired password)
+# If the resulting BASE-20 password contains $, you need to escape ALL MANUALLY with another $ (i.e. add another $ before each $ in the password)
+# Otherwise, you won't be able to login to Traefik dashboard
+
+
+######################### Remote access #########################
+### Cloudflared DDNS config
+vault_cf_api_key: # Your Cloudflare API key
+vault_cf_zone: # Your Cloudflare zone (can be found in the Cloudflare dashboard)
+vault_cf_subdomain: # Subdomain for Cloudflare DDNS (can be empty, e.g., if using root domain)
+
+### No-IP
+# No-IP is a dynamic DNS service that allows you to access your home lab remotely.
+# Ensure you have a No-IP account and the necessary credentials.
+vault_noip_username: # Your No-IP username
+vault_noip_password: # Your No-IP password
+vault_noip_domains: # Comma-separated list of No-IP domains (e.g., example1.ddns.net,example2.ddns.net)
+
+### Wireguard
+vault_wg_host_url: # Public hostname of your VPN server (e.g., example.com)
+
+######################### Dashboards #########################
+### Homepage
+vault_homepage_allowed_hosts: "{{ homepage_domain_prefix }}.{{ vault_domain }}" # List of allowed hosts for homepage
+vault_homepage_services_pihole_widget_key: "{{ vault_pi_hole_webpassword }}" # Pi-hole widget key for homepage. Follow these instructions to create: https://gethomepage.dev/widgets/services/pihole/

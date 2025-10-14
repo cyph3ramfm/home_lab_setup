@@ -1,0 +1,19 @@
+---
+- name: Check if It-tools container exists
+  community.docker.docker_container_info:
+    name: it-tools
+  register: it_tools_info
+
+- name: Render It-tools compose file
+  ansible.builtin.template:
+    src: it-tools.yml.j2
+    dest: /tmp/coding_tools/it-tools.yml
+    mode: '0644'
+  when: not it_tools_info.exists
+
+- name: Deploy It-tools using Docker Compose
+  community.docker.docker_compose_v2:
+    project_src: /tmp/coding_tools
+    files:
+      - it-tools.yml
+  when: not it_tools_info.exists

@@ -1,0 +1,31 @@
+---
+services:
+  it-tools:
+    image: ghcr.io/corentinth/it-tools:latest
+    container_name: it-tools
+    #ports:
+    #  - 8080:80
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+          max-size: "50m"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.it-tools.entrypoints=http"
+      - "traefik.http.routers.it-tools.rule=Host(`{{ it_tools_domain_prefix }}.{{ vault_domain }}`)"
+      - "traefik.http.middlewares.it-tools-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.it-tools.middlewares=it-tools-https-redirect"
+      - "traefik.http.routers.it-tools-secure.entrypoints=https"
+      - "traefik.http.routers.it-tools-secure.rule=Host(`{{ it_tools_domain_prefix }}.{{ vault_domain }}`)"
+      - "traefik.http.routers.it-tools-secure.tls=true"
+      - "traefik.http.routers.it-tools-secure.service=it-tools"
+      - "traefik.http.services.it-tools.loadbalancer.server.port=80"
+      - "traefik.docker.network={{ proxy_network_name }}"
+    networks:
+      - {{ proxy_network_name }}
+      
+
+networks:
+  {{ proxy_network_name }}:
+    external: true
