@@ -57,7 +57,7 @@ ansible.cfg
 *.retry
 
 # Ansible Vault files
-group_vars/vault.yml
+vault.yml
 
 # Visual Studio Code
 .vscode/
