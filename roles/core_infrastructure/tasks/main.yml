@@ -87,7 +87,8 @@
         dest: /etc/resolv.conf
         content: |
           # managed by ansible: use local Pi-hole
-          nameserver 127.0.0.1
+          nameserver 127.0.0.1    # Pi-hole first DNS resolver
+          nameserver 1.1.1.1      # Fallback to Cloudflare if Pi-hole is down
           search .
         owner: root
         group: root
