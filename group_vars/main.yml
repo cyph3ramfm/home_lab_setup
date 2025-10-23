@@ -15,7 +15,7 @@ deploy_remote_access: true  # Set to true to deploy remote access (cloudflared d
 deploy_dashboards: true  # Set to true to deploy dashboards (homepage, glances, uptime-kuma)
 
 ######################### NFS share #########################
-nfs_server: "192.168.0.2" # IP address of the NFS server (NAS)
+nfs_server: "192.168.0.2" # IP address or name (nas.domain.com) of the NFS server (NAS)
 nfs_path: "/share/docker_volumes" # Path on the NFS server to mount
 mount_point: "/mnt/docker_volumes"  # Local mount point for NFS share
 
@@ -94,4 +94,5 @@ glances_domain_prefix: glances # Domain prefix for Glances dashboard
 
 ### Uptime Kuma
 uptime_kuma_data_path: /var/docker_data/uptime-kuma # Path to Uptime Kuma data directory
+
 uptime_kuma_domain_prefix: uptime-kuma # Domain prefix for Uptime Kuma dashboard
