@@ -15,10 +15,10 @@ server:
     # data in the cache is as the domain owner intended, higher values,
     # especially more than an hour or so, can lead to trouble as the data in
     # the cache does not match up with the actual data any more.
-    cache-min-ttl: 300
+    cache-min-ttl: 3600
 
     # Set the working directory for the program.
-    directory: "/opt/unbound/etc/unbound"
+    # directory: "/opt/unbound/etc/unbound"
 
     # Enable or disable whether IPv4 queries are answered or issued.
     # Default: yes
@@ -32,7 +32,7 @@ server:
     # it.
     # Default: yes
     # May be set to yes if you have IPv6 connectivity
-    do-ip6: yes 
+    do-ip6: no 
 
     # Enable or disable whether TCP queries are answered or issued.
     # Default: yes
@@ -55,9 +55,9 @@ server:
 
     # Listen to for queries from clients and answer from this network interface
     # and port.
-    interface: 0.0.0.0@5053
+    # interface: 0.0.0.0@5053
     # interface: ::0
-    port: 53
+    # port: 53
 
     # If enabled, prefer IPv6 transport for sending DNS queries to internet
     # nameservers.
@@ -71,7 +71,7 @@ server:
     rrset-roundrobin: yes
 
     # Drop user  privileges after  binding the port.
-    username: "_unbound"
+    # username: "_unbound"
 
     ###########################################################################
     # LOGGING
@@ -101,7 +101,7 @@ server:
     # Level 3: Gives query level information, output per query.
     # Level 4:  Gives algorithm level information.
     # Level 5: Logs client identification for cache misses.
-    verbosity: 0
+    verbosity: 1
 
     ###########################################################################
     # PERFORMANCE SETTINGS
@@ -194,7 +194,7 @@ server:
     # net.core.rmem_max=4194304
     # Larger socket buffer. OS may need config.
     # Ensure kernel buffer is large enough to not lose messages in traffic spikes
-    #so-rcvbuf: 4m 
+    so-rcvbuf: 0 # 4m 
 
     # Open dedicated listening sockets for incoming queries for each thread and
     # try to set the SO_REUSEPORT socket option on each socket. May distribute
@@ -212,7 +212,7 @@ server:
     # Default: 0 (use system value)
     # Larger socket buffer. OS may need config.
     # Ensure kernel buffer is large enough to not lose messages in traffic spikes
-    #so-sndbuf: 4m
+    so-sndbuf: 0 # 4m
 
     ###########################################################################
     # PRIVACY SETTINGS
@@ -261,11 +261,11 @@ server:
 
     # File with trust anchor for  one  zone, which is tracked with RFC5011
     # probes.
-    auto-trust-anchor-file: "var/root.key"
+    # auto-trust-anchor-file: "var/root.key"
 
     # Enable chroot (i.e, change apparent root directory for the current
     # running process and its children)
-    chroot: "/opt/unbound/etc/unbound"
+    # chroot: "/opt/unbound/etc/unbound"
 
     # Deny queries of type ANY with an empty response.
     deny-any: yes
@@ -281,7 +281,7 @@ server:
     # Require DNSSEC data for trust-anchored zones, if such data is absent, the
     # zone becomes bogus. If turned off you run the risk of a downgrade attack
     # that disables security for a zone.
-    harden-dnssec-stripped: yes
+    harden-dnssec-stripped: no # allow soft-fail like Cloudflarees
 
     # Only trust glue if it is within the servers authority.
     harden-glue: yes
@@ -382,6 +382,9 @@ server:
     # WILDCARD INCLUDE
     ###########################################################################
     #include: "/opt/unbound/etc/unbound/*.conf"
+
+    # Avoid strict SERVFAILs
+    val-permissive-mode: yes  # <--- key change: allows soft-fail
 
 remote-control:
     control-enable: no
