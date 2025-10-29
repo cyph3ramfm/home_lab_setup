@@ -41,7 +41,6 @@ services:
       # If you're upgrading from v5 you and have used this directory before, you should keep it enabled for the first v6 container start to allow for a complete migration. 
       # It can be removed afterwards. Needs environment variable FTLCONF_misc_etc_dnsmasq_d: 'true'
       # - {{ pi_hole_dnsmasq_path }}:/etc/dnsmasq.d
-
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.pihole.entrypoints=http"
@@ -57,12 +56,12 @@ services:
 
   unbound:
     container_name: unbound
-    image: mvance/unbound:latest # remember to change this if you're using rpi
+    image: crazymax/unbound:latest
     networks:
       dns_net:
         ipv4_address: 172.23.0.8
     volumes:
-      - {{ unbound_config_path }}:/opt/unbound/etc/unbound
+      - {{ unbound_config_path }}:/config
     ports:
       - "5053:53/tcp"
       - "5053:53/udp"
