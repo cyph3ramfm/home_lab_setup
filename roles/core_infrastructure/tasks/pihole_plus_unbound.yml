@@ -24,30 +24,6 @@
     mode: '0777'
   when: not unbound_info.exists
 
-# Currently not used, but may be useful in the future
-- name: Deploy Unbound A records configuration
-  ansible.builtin.template:
-    src: a-records.conf.j2
-    dest: "{{ unbound_config_path }}/a-records.conf"
-    mode: '0777'
-  when: not unbound_info.exists
-
-# Currently not used, but may be useful in the future
-- name: Deploy Unbound forward records configuration
-  ansible.builtin.template:
-    src: forward-records.conf.j2
-    dest: "{{ unbound_config_path }}/forward-records.conf"
-    mode: '0777'
-  when: not unbound_info.exists
-
-# Currently not used, but may be useful in the future
-- name: Deploy Unbound srv records configuration
-  ansible.builtin.template:
-    src: srv-records.conf.j2
-    dest: "{{ unbound_config_path }}/srv-records.conf"
-    mode: '0777'
-  when: not unbound_info.exists
-
 - name: Render Pi-hole plus Unbound compose file
   ansible.builtin.template:
     src: pihole_plus_unbound.yml.j2
