@@ -38,7 +38,7 @@
         source: pull
       loop:
         - "pihole/pihole:latest"
-        - "mvance/unbound:latest"
+        - "crazymax/unbound:latest"
       when: deploy_core_infrastructure | bool
 
     # Ensure port 53 is available for Pi-hole by disabling systemd-resolved's DNSStubListener
