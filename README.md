@@ -142,6 +142,8 @@ The deployment uses two Docker networks:
 - **home_lab_network**: Internal service communication (172.16.3.0/24)
 - **proxy_network**: External services behind Traefik
 
+- POST DEPLOYMENT: Don't forget to add 127.0.0.1 to your ubuntu netplan, otherwise Homepage may not work properly.
+
 ## Security and Vault Management
 
 ### Managing Sensitive Data
@@ -247,5 +249,6 @@ labels:
    - Network dependencies: Ensure proper role execution order
 
 ## License
+
 
 This project is licensed under the MIT License. See the LICENSE file for more details.
